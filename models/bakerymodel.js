@@ -16,11 +16,11 @@ var BakerySchema = new mongoose.Schema({
     bookmarkcount : { type : Number, default : '0'}, //즐겨찾기수
     strength : { type : String, default : ''}, //강점
     regdate : { type : Date,   deafult : Date.now}, //등록일자
-    // filedata : { type : Buffer, default : null}, //파일데이터
-    // filename : { type : String, default : '' }, //파일명
-    // filetype : { type : String, default : '' }, //파일종류
-    // filesize : { type : Number, default : 0 }, //파일크기
-    // imageurl : { type : String, default : '' }, //이미지 URL
+    filedata : { type : Buffer, default : null}, //파일데이터
+    filename : { type : String, default : '' }, //파일명
+    filetype : { type : String, default : '' }, //파일종류
+    filesize : { type : Number, default : 0 }, //파일크기
+    imageurl : { type : String, default : '' }, //이미지 URL
 },    
 {
     versionKey:false
