@@ -15,6 +15,8 @@ var BakerySchema = new mongoose.Schema({
     hit : { type : Number, default : '0'}, //조회수
     bookmarkcount : { type : Number, default : '0'}, //즐겨찾기수
     strength : { type : String, default : ''}, //강점
+    lat : { type : String, default : ''}, //위도
+    lng : { type : String, default : ''}, //경도
     regdate : { type : Date,   deafult : Date.now}, //등록일자
     filedata : { type : Buffer, default : null}, //파일데이터
     filename : { type : String, default : '' }, //파일명

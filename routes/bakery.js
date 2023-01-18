@@ -29,6 +29,8 @@ router.post('/insertshop.json', upload.single("file"), async function (req, res,
       bakery.point = req.body.point;
       bakery.hit = req.body.hit;
       bakery.bookmarkcount = req.body.bookmarkcount;
+      bakery.lat = Number(req.body.lat);
+      bakery.lng = Number(req.body.lng);
       bakery.strength = req.body.strength;
       bakery.filedata = req.file.buffer;
       bakery.filename = req.file.originalname;
@@ -63,7 +65,7 @@ router.get('/selectshop.json', async function(req, res, next){
       filesize: 0, 
       filetype: 0,
     };
-    const result = await Bakery.find(query)
+    const result = await Bakery.find(query,project)
                               .sort({_id : -1})
                               .skip((page-1)*10)
                               .limit(10);
