@@ -10,6 +10,7 @@ var mongoose = require('mongoose');
 // 1. require,rest용
 //빵집관련
 var bakeryRouter = require('./routes/bakery');
+var bakeryReviewRouter = require('./routes/bakeryreview');
 
 //vue에서 빌드한 페이지 표시용
 var indexRouter = require('./routes/index');
@@ -32,6 +33,7 @@ mongoose.connection;
 
 // 2. 주소 설정
 app.use('/api/bakery', bakeryRouter);
+app.use('/api/bakeryreview', bakeryReviewRouter);
 
 //vue에서 빌드한 페이지 보여주기 용
 app.use('/', indexRouter);
