@@ -93,12 +93,10 @@ router.get('/selectreviewone.json', async function (req, res, next) {
   try {
 
     const _id = req.query._id;
-    const bakery_id = req.query.bakery_id;
 
     //전체 데이터에서 제목이 검색어가 포함된 것 가져오기
     // a => a123, 
     const query = { _id: Number(_id) }; //RegExp(포함된 것을 찾아내는 함수)
-    const query3 = { bakery_id: Number(bakery_id) };
     const project = {
       filedata: 0,
       filename: 0,
@@ -113,7 +111,6 @@ router.get('/selectreviewone.json', async function (req, res, next) {
       //format("YYYY-MM-DD HH:mm:ss")
       result.regdate1 = moment(result.regdate).format("YYYY-MM-DD HH:mm:ss");
       result.imageurl = `/api/bakeryreview/image?_id=${_id}&ts=${Date.now()}`;
-
 
       //이전글
       // $lt 작다, $gt 크다, $lte 작거나 같다, $gte 크거나 같다.
@@ -147,13 +144,59 @@ router.get('/selectreviewone.json', async function (req, res, next) {
         next = 0;
       }
 
+      //최신글에서 5번째 글번호 조회(더보기 띄우기용)
+      // $lt 작다, $gt 크다, $lte 작거나 같다, $gte 크거나 같다.
+      let prev5 = await BakeryReview.find({},project1)
+        .sort({ _id: -1 })
+        .skip(5)
+        .limit(1);
+      console.log('prev5=>', prev5);
+
+      if (prev5.length > 0) {
+        prev5 = prev5[0]._id;
+      }
+      else {
+        prev5 = 0;
+      }
+
       return res.send({
         status: 200,
         result: result,
         prev: prev,
         next: next,
+        prev5 : prev5,
       });
     } return res.send({ status: 0 });
+  } catch (e) {
+    console.error(e);
+
+    return res.send({ status: -1, result: e });
+  }
+});
+
+//리뷰 내림차순 중 5번째 리뷰번호 받기용(더보기 띄우기)
+router.get('/selectreviewone5.json', async function (req, res, next) {
+  try {
+
+      const project1 = { _id: 1 };
+      // $lt 작다, $gt 크다, $lte 작거나 같다, $gte 크거나 같다.
+      let prev5 = await BakeryReview.find({},project1)
+        .sort({ _id: -1 })
+        .skip(5)
+        .limit(1);
+      console.log('prev5=>', prev5);
+
+      if (prev5.length > 0) {
+        prev5 = prev5[0]._id;
+      }
+      else {
+        prev5 = 0;
+      }
+
+      return res.send({
+        status: 200,
+        prev5 : prev5,
+      });
   } catch (e) {
     console.error(e);
 
