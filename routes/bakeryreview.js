@@ -174,6 +174,46 @@ router.get('/selectreviewone.json', async function (req, res, next) {
   }
 });
 
+//모달창 smallimg데이터 수신
+router.get('/selectreviewsmallimg.json', async function (req, res, next) {
+  try {
+    const bakery_id = req.query.bakery_id;
+    const page = req.query.page;
+    const query = { bakery_id: Number(bakery_id) };
+    const project = {
+      filedata: 0,
+      filename: 0,
+      filesize: 0,
+      filetype: 0,
+    };
+
+    const result = await BakeryReview.find(query, project)
+                                     .sort({_id : -1})
+                                     .skip((page-1)*10)
+                                     .limit(10);
+
+    //등록일, 이미지URL 수동 생성                          
+    for (let tmp of result) {
+      //format("YYYY-MM-DD HH:mm:ss")
+      tmp.regdate1 = moment(tmp.regdate).format("YYYY-MM-DD HH:mm:ss");
+      tmp.imageurl = `/api/bakeryreview/image?_id=${tmp._id}&ts=${Date.now()}`;
+    }
+
+    //페이지네이션용 전체 개수
+    const total = await BakeryReview.countDocuments(query);
+
+      return res.send({
+        status: 200,
+        result: result,
+        total:total,
+      });
+    }  catch (e) {
+    console.error(e);
+
+    return res.send({ status: -1, result: e });
+  }
+});
+
 //리뷰 내림차순 중 5번째 리뷰번호 받기용(더보기 띄우기)
 router.get('/selectreviewone5.json', async function (req, res, next) {
   try {
