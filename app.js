@@ -11,9 +11,7 @@ var mongoose = require('mongoose');
 //빵집관련
 var bakeryRouter = require('./routes/bakery');
 var bakeryReviewRouter = require('./routes/bakeryreview');
-
-//vue에서 빌드한 페이지 표시용
-var indexRouter = require('./routes/index');
+var iconRouter = require('./routes/icon');
 
 var app = express();
 
@@ -34,10 +32,7 @@ mongoose.connection;
 // 2. 주소 설정
 app.use('/api/bakery', bakeryRouter);
 app.use('/api/bakeryreview', bakeryReviewRouter);
-
-//vue에서 빌드한 페이지 보여주기 용
-app.use('/', indexRouter);
-// app.use('/users', usersRouter);
+app.use('/api/icon', iconRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
