@@ -11,13 +11,13 @@ var BakerySchema = new mongoose.Schema({
     menu : { type : String, default : ''}, //메뉴
     price : { type : String, default : ''}, //가격
     holiday : { type : String, default : ''}, //휴일
-    point : { type : Number, default : '0'}, //평점
-    hit : { type : Number, default : '0'}, //조회수
-    bookmarkcount : { type : Number, default : '0'}, //즐겨찾기수
+    point : { type : Number, default : 0}, //평점
+    hit : { type : Number, default : 0}, //조회수
+    bookmarkcount : { type : Number, default : 0}, //즐겨찾기수
     strength : { type : String, default : ''}, //강점
     lat : { type : String, default : ''}, //위도
     lng : { type : String, default : ''}, //경도
-    regdate : { type : Date,   deafult : Date.now}, //등록일자
+    regdate : { type : Date,   default : Date.now}, //등록일자
     regdate1 : { type : String,   deafult :''}, //등록일자 포맷 변경
     filedata : { type : Buffer, default : null}, //파일데이터
     filename : { type : String, default : '' }, //파일명

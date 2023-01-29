@@ -32,8 +32,6 @@ router.post('/insertshop.json', upload.single("file"), async function (req, res,
     bakery.price = req.body.price;
     bakery.holiday = req.body.holiday;
     bakery.point = req.body.point;
-    bakery.hit = req.body.hit;
-    bakery.bookmarkcount = req.body.bookmarkcount;
     bakery.lat = Number(req.body.lat);
     bakery.lng = Number(req.body.lng);
     bakery.strength = req.body.strength;

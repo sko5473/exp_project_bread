@@ -12,6 +12,7 @@ var mongoose = require('mongoose');
 var bakeryRouter = require('./routes/bakery');
 var bakeryReviewRouter = require('./routes/bakeryreview');
 var iconRouter = require('./routes/icon');
+var userRouter = require('./routes/user');
 
 var app = express();
 
@@ -33,6 +34,7 @@ mongoose.connection;
 app.use('/api/bakery', bakeryRouter);
 app.use('/api/bakeryreview', bakeryReviewRouter);
 app.use('/api/icon', iconRouter);
+app.use('/api/user', userRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
