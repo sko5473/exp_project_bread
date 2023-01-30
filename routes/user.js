@@ -14,23 +14,24 @@ var upload = multer({ storage: multer.memoryStorage() });
 //모델 객체
 var User = require('../models/usermodel');
 
-// 유저등록 => 127.0.0.1:3000/api/user/insertuser.json
-router.post('/insertuser.json', upload.single("file"), async function (req, res, next) {
+// 유저등록 => 127.0.0.1:3000/api/user/insertuser.json upload.single("file"), 
+router.post('/insertuser.json', async function (req, res, next) {
     try {
         console.log('알이큐', req);
         console.log('바디', req.body);
         console.log('파일', req.file);
 
         const user = new User();
-        user.nickname = req.body.nickname;
+        user.id = req.body.id;
         user.address = req.body.address;
+        user.detailaddress = req.body.detailaddress;
         user.email = req.body.email;
         user.gender = req.body.gender;
         user.password = req.body.password;
-        user.filedata = req.file.buffer;
-        user.filename = req.file.originalname;
-        user.filetype = req.file.mimetype;
-        user.filesize = req.file.size;
+        // user.filedata = req.file.buffer;
+        // user.filename = req.file.originalname;
+        // user.filetype = req.file.mimetype;
+        // user.filesize = req.file.size;
     
 
         const result = await user.save();

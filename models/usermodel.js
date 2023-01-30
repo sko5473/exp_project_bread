@@ -5,8 +5,9 @@ const saltRounds = 10;
 
 var UserSchema = new mongoose.Schema({
     _id: { type: Number, default: 0 }, // 회원번호
-    nickname: { type: String, default: '' }, // 닉네임
+    id: { type: String, default: '' }, // id
     address: { type: String, default: '' }, //주소
+    detailaddress: { type: String, default: '' }, //상세주소
     email: { type: String, default: '' }, // 이메일
     gender: { type: String, default: '' }, //성별
     password: { type: String, default: '' }, //비밀번호
