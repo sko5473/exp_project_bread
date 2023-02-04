@@ -32,7 +32,7 @@ router.post('/insertuser.json', async function (req, res, next) {
         // user.filename = req.file.originalname;
         // user.filetype = req.file.mimetype;
         // user.filesize = req.file.size;
-    
+
 
         const result = await user.save();
 
@@ -46,6 +46,46 @@ router.post('/insertuser.json', async function (req, res, next) {
         return res.send({ status: -1, result: e });
     }
 });
+
+router.post("/login.json", async (req, res) => {
+    //로그인을할때 아이디와 비밀번호를 받는다
+    User.findOne({ id: req.body.id }, (err, user) => {
+        if (err) {
+            return res.json({
+                loginSuccess: false,
+                message: "존재하지 않는 아이디입니다.",
+            });
+        }
+        user.comparePassword(req.body.password)
+            .then((isMatch) => {
+                if (!isMatch) {
+                    return res.json({
+                        loginSuccess: false,
+                        message: "비밀번호가 일치하지 않습니다",
+                    });
+                }
+               
+                //비밀번호가 일치하면 토큰을 생성한다
+                //jwt 토큰 생성하는 메소드
+                user.generateToken()
+                    .then((user) => {
+                        console.log('여기3');
+                        res.cookie("x_auth", user.token)
+                           .status(200)
+                           .json({ loginSuccess: true, userId: user._id });
+                           console.log('여기2');
+                    })
+                    .catch((err) => {
+                        res.status(400).send(err);
+                        console.log('여기');
+                    });
+            })
+            .catch((err) => res.json({ loginSuccess: false, err }));
+            console.log('여기1');
+    });
+});
+
+
 
 //이미지 URL => 127.0.0.1:3000/api/user/image?_id=3
 //<img src="/api/user/image?_id=3">

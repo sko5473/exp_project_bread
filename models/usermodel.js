@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var sequence = require('mongoose-sequence')(mongoose);
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
+const jwt = require('jsonwebtoken');
 
 var UserSchema = new mongoose.Schema({
     _id: { type: Number, default: 0 }, // 회원번호
@@ -48,5 +49,22 @@ UserSchema.pre("save", function (next) {
         next();
     }
 });
+
+UserSchema.methods.comparePassword = function (plainPassword) {
+    //plainPassword를 암호화해서 현재 비밀번호화 비교
+    return bcrypt
+      .compare(plainPassword, this.password)
+      .then((isMatch) => isMatch)
+      .catch((err) => err);
+};
+
+UserSchema.methods.generateToken = function () {
+    console.log('실행',this._id);
+    const token = jwt.sign(this._id, "secretToken");
+    this.token = token;
+    return this.save()
+      .then((user) => user)
+      .catch((err) => err);
+};
 
 module.exports = mongoose.model('users', UserSchema);
