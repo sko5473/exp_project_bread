@@ -17,22 +17,14 @@ var User = require('../models/usermodel');
 // 유저등록 => 127.0.0.1:3000/api/user/insertuser.json upload.single("file"), 
 router.post('/insertuser.json', async function (req, res, next) {
     try {
-        console.log('알이큐', req);
-        console.log('바디', req.body);
-        console.log('파일', req.file);
-
         const user = new User();
-        user.id = req.body.id;
+        user.email = req.body.email;
+        user.name = req.body.name;
         user.address = req.body.address;
         user.detailaddress = req.body.detailaddress;
-        user.email = req.body.email;
         user.gender = req.body.gender;
         user.password = req.body.password;
-        // user.filedata = req.file.buffer;
-        // user.filename = req.file.originalname;
-        // user.filetype = req.file.mimetype;
-        // user.filesize = req.file.size;
-
+        user.isadmin = 'N'; //관리자유무 기본 N, 관리자 등록시 DB에 직접 Y 입력
 
         const result = await user.save();
 
@@ -47,16 +39,19 @@ router.post('/insertuser.json', async function (req, res, next) {
     }
 });
 
+//로그인 로직 /api/user/login_json
 router.post("/login.json", async (req, res) => {
     //로그인을할때 아이디와 비밀번호를 받는다
-    User.findOne({ id: req.body.id }, (err, user) => {
-        if (err) {
-            return res.json({
-                loginSuccess: false,
-                message: "존재하지 않는 아이디입니다.",
-            });
-        }
-        user.comparePassword(req.body.password)
+    const query = { email: req.body.email };
+    const result = await User.findOne(query);
+
+    if (result === null) {
+        return res.json({
+            loginSuccess: false,
+            message: "존재하지 않는 아이디입니다.",
+        });
+    } else {
+        result.comparePassword(req.body.password)
             .then((isMatch) => {
                 if (!isMatch) {
                     return res.json({
@@ -64,28 +59,35 @@ router.post("/login.json", async (req, res) => {
                         message: "비밀번호가 일치하지 않습니다",
                     });
                 }
-               
-                //비밀번호가 일치하면 토큰을 생성한다
-                //jwt 토큰 생성하는 메소드
-                user.generateToken()
+
+                //비밀번호 일치시 토큰 생성
+                result.generateToken()
                     .then((user) => {
-                        console.log('여기3');
-                        res.cookie("x_auth", user.token)
-                           .status(200)
-                           .json({ loginSuccess: true, userId: user._id });
-                           console.log('여기2');
+                        res.cookie("token", user.token)
+                            .status(200)
+                            .json({ //로그인 성공시 화면에 전달하는 정보
+                                loginSuccess: true,
+                                userName: user.name,
+                                userEmail: user.email,
+                                isadmin: user.isadmin,
+                                status: 200
+                            });
                     })
                     .catch((err) => {
                         res.status(400).send(err);
-                        console.log('여기');
                     });
             })
             .catch((err) => res.json({ loginSuccess: false, err }));
-            console.log('여기1');
-    });
+    }
 });
 
-
+//로그아웃 로직
+router.delete('/logout.json', (req, res) => {
+    if (req.cookies && req.cookies.token) {
+        res.clearCookie("token")
+    }
+    res.send(200);
+});
 
 //이미지 URL => 127.0.0.1:3000/api/user/image?_id=3
 //<img src="/api/user/image?_id=3">

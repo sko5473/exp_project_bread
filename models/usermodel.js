@@ -6,10 +6,11 @@ const jwt = require('jsonwebtoken');
 
 var UserSchema = new mongoose.Schema({
     _id: { type: Number, default: 0 }, // 회원번호
-    id: { type: String, default: '' }, // id
-    address: { type: String, default: '' }, //주소
-    detailaddress: { type: String, default: '' }, //상세주소
     email: { type: String, default: '' }, // 이메일
+    name: { type: String, default: '' }, // 이름
+    address: { type: String, default: '' }, //주소
+    isadmin: { type: String, default: '' }, //관리자유무
+    detailaddress: { type: String, default: '' }, //상세주소
     gender: { type: String, default: '' }, //성별
     password: { type: String, default: '' }, //비밀번호
     reveiwcount: { type: Number, default: 0 }, //리뷰횟수
@@ -53,18 +54,33 @@ UserSchema.pre("save", function (next) {
 UserSchema.methods.comparePassword = function (plainPassword) {
     //plainPassword를 암호화해서 현재 비밀번호화 비교
     return bcrypt
-      .compare(plainPassword, this.password)
-      .then((isMatch) => isMatch)
-      .catch((err) => err);
+        .compare(plainPassword, this.password)
+        .then((isMatch) => isMatch)
+        .catch((err) => err);
 };
 
 UserSchema.methods.generateToken = function () {
-    console.log('실행',this._id);
-    const token = jwt.sign(this._id, "secretToken");
+    const token = jwt.sign({
+        _id: this._id,
+        name: this.name,
+        email: this.email
+    }, "secretToken");
     this.token = token;
     return this.save()
-      .then((user) => user)
-      .catch((err) => err);
+        .then((user) => user)
+        .catch((err) => err);
+};
+
+UserSchema.statics.findByToken = function (token) {
+    let user = this;
+    //secretToken을 통해 user의 id값을 받아오고 해당 아이디를 통해
+    //Db에 접근해서 유저의 정보를 가져온다  
+    return jwt.verify(token, "secretToken", function (err, decoded) {
+        return user
+            .findOne({ _id: decoded, token: token })
+            .then((user) => user)
+            .catch((err) => err);
+    });
 };
 
 module.exports = mongoose.model('users', UserSchema);
