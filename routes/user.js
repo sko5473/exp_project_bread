@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const { auth } = require("../middleware/auth");
 
 // 타임 존 설정하기
 var moment = require('moment');
@@ -39,7 +40,7 @@ router.post('/insertuser.json', async function (req, res, next) {
     }
 });
 
-//로그인 로직 /api/user/login_json
+//로그인 로직 /api/user/login.json
 router.post("/login.json", async (req, res) => {
     //로그인을할때 아이디와 비밀번호를 받는다
     const query = { email: req.body.email };
@@ -79,6 +80,18 @@ router.post("/login.json", async (req, res) => {
             })
             .catch((err) => res.json({ loginSuccess: false, err }));
     }
+});
+
+//auth 미들웨어를 가져온다
+//auth 미들웨어에서 필요한것 : Token을 찾아서 검증하기
+router.get("/auth", auth, (req, res) => {
+    //auth 미들웨어를 통과한 상태 이므로
+    //req.user에 user값을 넣어줬으므로
+    res.status(200).json({ //재 인증 후 전달해줄 정보
+        email: req.user.email,
+        name: req.user.name,
+        isadmin: req.user.isadmin
+    });
 });
 
 //로그아웃 로직

@@ -9,7 +9,7 @@ var UserSchema = new mongoose.Schema({
     email: { type: String, default: '' }, // 이메일
     name: { type: String, default: '' }, // 이름
     address: { type: String, default: '' }, //주소
-    isadmin: { type: String, default: '' }, //관리자유무
+    isadmin: { type: Boolean, default: false }, //관리자유무
     detailaddress: { type: String, default: '' }, //상세주소
     gender: { type: String, default: '' }, //성별
     password: { type: String, default: '' }, //비밀번호
@@ -62,8 +62,6 @@ UserSchema.methods.comparePassword = function (plainPassword) {
 UserSchema.methods.generateToken = function () {
     const token = jwt.sign({
         _id: this._id,
-        name: this.name,
-        email: this.email
     }, "secretToken");
     this.token = token;
     return this.save()
