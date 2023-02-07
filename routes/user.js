@@ -25,7 +25,7 @@ router.post('/insertuser.json', async function (req, res, next) {
         user.detailaddress = req.body.detailaddress;
         user.gender = req.body.gender;
         user.password = req.body.password;
-        user.isadmin = 'N'; //관리자유무 기본 N, 관리자 등록시 DB에 직접 Y 입력
+        user.isadmin = false; //관리자유무 기본 false, 관리자 등록시 DB에 직접 true 입력
 
         const result = await user.save();
 

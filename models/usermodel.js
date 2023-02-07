@@ -3,6 +3,7 @@ var sequence = require('mongoose-sequence')(mongoose);
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const jwt = require('jsonwebtoken');
+const jwtKey = 'a1b1c1d1Token';
 
 var UserSchema = new mongoose.Schema({
     _id: { type: Number, default: 0 }, // 회원번호
@@ -62,7 +63,10 @@ UserSchema.methods.comparePassword = function (plainPassword) {
 UserSchema.methods.generateToken = function () {
     const token = jwt.sign({
         _id: this._id,
-    }, "secretToken");
+    }, jwtKey ,{
+        algorithm: 'HS256', //암호화 알고리즘
+        expiresIn: '15m' //jwt쿠키 만료시간(15분)
+    });
     this.token = token;
     return this.save()
         .then((user) => user)
@@ -73,7 +77,7 @@ UserSchema.statics.findByToken = function (token) {
     let user = this;
     //secretToken을 통해 user의 id값을 받아오고 해당 아이디를 통해
     //Db에 접근해서 유저의 정보를 가져온다  
-    return jwt.verify(token, "secretToken", function (err, decoded) {
+    return jwt.verify(token, jwtKey , function (err, decoded) {
         return user
             .findOne({ _id: decoded, token: token })
             .then((user) => user)
