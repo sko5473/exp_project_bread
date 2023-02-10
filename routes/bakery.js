@@ -61,7 +61,7 @@ router.get('/selectshop.json', async function (req, res, next) {
 
     //전체 데이터에서 제목이 검색어가 포함된 것 가져오기
     // a => a123, 
-    const query = { address: new RegExp(text, 'i') }; //RegExp(포함된 것을 찾아내는 함수)
+    const query = { $or: [{address: new RegExp(text, 'i')}, {name: new RegExp(text, 'i')}] }; //RegExp(포함된 것을 찾아내는 함수)
     const project = {
       filedata: 0,
       filename: 0,

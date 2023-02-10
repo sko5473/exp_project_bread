@@ -65,7 +65,7 @@ UserSchema.methods.generateToken = function () {
         _id: this._id,
     }, jwtKey ,{
         algorithm: 'HS256', //암호화 알고리즘
-        expiresIn: '15m' //jwt쿠키 만료시간(15분)
+        expiresIn: '59m' //jwt쿠키 만료시간(15분)
     });
     this.token = token;
     return this.save()
