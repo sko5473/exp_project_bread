@@ -87,9 +87,14 @@ router.post("/login.json", async (req, res) => {
 router.get("/auth", auth, (req, res) => {
     //auth 미들웨어를 통과한 상태 이므로
     //req.user에 user값을 넣어줬으므로
+    console.log('알알',req);
     res.status(200).json({ //재 인증 후 전달해줄 정보
         email: req.user.email,
         name: req.user.name,
+        gender: req.user.gender,
+        address: req.user.address,
+        detailaddress: req.user.detailaddress,
+        reviewcount: req.user.reviewcount,
         isadmin: req.user.isadmin
     });
 });
