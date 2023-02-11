@@ -40,6 +40,32 @@ router.post('/insertuser.json', async function (req, res, next) {
     }
 });
 
+//유저수정 127.0.0.1:3000/api/user/updateuser.json
+router.put('/updateuser.json', upload.single("file"), async function(req, res, next){
+    try {
+        const query = { email : req.body.email };
+        const user   = await User.findOne(query);
+  
+        user.title   = req.body.password;
+        user.content = req.body.address;
+        user.writer  = req.body.writer;
+        user.filedata = req.file.buffer;
+        user.filename = req.file.originalname;
+        user.filetype = req.file.mimetype;
+        user.filesize = req.file.size;
+  
+        const result = await user.save();
+        if(result !== null){
+          return res.send({status : 200});
+        }
+        return res.send({status : 0});
+    } catch (e) {
+      
+      console.error(e);
+      return res.send({status : -1, result : e});
+    }
+  });
+
 //로그인 로직 /api/user/login.json
 router.post("/login.json", async (req, res) => {
     //로그인을할때 아이디와 비밀번호를 받는다

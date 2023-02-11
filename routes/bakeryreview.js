@@ -18,10 +18,6 @@ var BakeryReview = require('../models/bakeryreviewmodel');
 //{"title":"a", "content":"b", "writer":"c","file":"첨부파일"}
 router.post('/insertshopreview.json', upload.single("file"), async function (req, res, next) {
   try {
-    console.log('알이큐', req);
-    console.log('바디', req.body);
-    console.log('파일', req.file);
-
     const bakeryreview = new BakeryReview();
     bakeryreview.bakery_id = req.query._id;
     bakeryreview.writer = req.body.writer;

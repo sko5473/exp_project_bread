@@ -53,6 +53,73 @@ router.post('/insertshop.json', upload.single("file"), async function (req, res,
   }
 });
 
+// 상점 리뷰수 업데이트 => 127.0.0.1:3000/api/bakery/updatereviewcount.json?_id=15
+// 수정 => 조건을 기존데이터 읽은 다음 변경항목 대체 => 저장
+router.put('/updatereviewcount.json', async function (req, res, next) {
+  try {
+    const query = { _id: Number(req.query._id) };
+    const result = await Bakery.findOne(query);
+
+    if (result !== null) {
+      result.reviewcount = result.reviewcount + 1;
+      const result1 = await result.save();
+
+      if (result1 !== null) {
+        return res.send({ status: 200 });
+      }
+    }
+    return res.send({ status: 0 });
+    
+  } catch (e) {
+    console.error(e);
+    return res.send({ status: -1, result: e });
+  }
+});
+
+// 상점 즐겨찾기수 증가업데이트 => 127.0.0.1:3000/api/bakery/updatebookmarkcountup.json?_id=15
+router.put('/updatebookmarkcountup.json', async function (req, res, next) {
+  try {
+    const query = { _id: Number(req.query._id) };
+    const result = await Bakery.findOne(query);
+
+    if (result !== null) {
+      result.bookmarkcount = result.bookmarkcount + 1;
+      const result1 = await result.save();
+
+      if (result1 !== null) {
+        return res.send({ status: 200 });
+      }
+    }
+    return res.send({ status: 0 });
+    
+  } catch (e) {
+    console.error(e);
+    return res.send({ status: -1, result: e });
+  }
+});
+
+// 상점 즐겨찾기수 감소업데이트 => 127.0.0.1:3000/api/bakery/updatebookmarkcountdown.json?_id=15
+router.put('/updatebookmarkcountdown.json', async function (req, res, next) {
+  try {
+    const query = { _id: Number(req.query._id) };
+    const result = await Bakery.findOne(query);
+
+    if (result !== null) {
+      result.bookmarkcount = result.bookmarkcount - 1;
+      const result1 = await result.save();
+
+      if (result1 !== null) {
+        return res.send({ status: 200 });
+      }
+    }
+    return res.send({ status: 0 });
+    
+  } catch (e) {
+    console.error(e);
+    return res.send({ status: -1, result: e });
+  }
+});
+
 //지역별 상점 목록 => 127.0.0.1:3000/api/bakery/selectshop.json?page=1&text=검색어
 router.get('/selectshop.json', async function (req, res, next) {
   try {
@@ -61,7 +128,7 @@ router.get('/selectshop.json', async function (req, res, next) {
 
     //전체 데이터에서 제목이 검색어가 포함된 것 가져오기
     // a => a123, 
-    const query = { $or: [{address: new RegExp(text, 'i')}, {name: new RegExp(text, 'i')}] }; //RegExp(포함된 것을 찾아내는 함수)
+    const query = { $or: [{ address: new RegExp(text, 'i') }, { name: new RegExp(text, 'i') }] }; //RegExp(포함된 것을 찾아내는 함수)
     const project = {
       filedata: 0,
       filename: 0,

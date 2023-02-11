@@ -12,7 +12,7 @@ var BakerySchema = new mongoose.Schema({
     price : { type : String, default : ''}, //가격
     holiday : { type : String, default : ''}, //휴일
     point : { type : Number, default : 0}, //평점
-    hit : { type : Number, default : 0}, //조회수
+    reviewcount : { type : Number, default : 0}, //리뷰수
     bookmarkcount : { type : Number, default : 0}, //즐겨찾기수
     strength : { type : String, default : ''}, //강점
     lat : { type : String, default : ''}, //위도
