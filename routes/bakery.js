@@ -18,10 +18,6 @@ var Bakery = require('../models/bakerymodel');
 //{"title":"a", "content":"b", "writer":"c","file":"첨부파일"}
 router.post('/insertshop.json', upload.single("file"), async function (req, res, next) {
   try {
-    console.log('알이큐', req);
-    console.log('바디', req.body);
-    console.log('파일', req.file);
-
     const bakery = new Bakery();
     bakery.name = req.body.name;
     bakery.address = req.body.address;

@@ -43,18 +43,20 @@ router.post('/insertuser.json', async function (req, res, next) {
 //유저수정 127.0.0.1:3000/api/user/updateuser.json
 router.put('/updateuser.json', upload.single("file"), async function(req, res, next){
     try {
+        console.log('이메일', req.body.email);
         const query = { email : req.body.email };
         const user   = await User.findOne(query);
-  
-        user.title   = req.body.password;
-        user.content = req.body.address;
-        user.writer  = req.body.writer;
+        
+        user.password   = req.body.password;
+        user.address = req.body.address;
+        user.detailaddress  = req.body.detailaddress;
         user.filedata = req.file.buffer;
         user.filename = req.file.originalname;
         user.filetype = req.file.mimetype;
         user.filesize = req.file.size;
   
         const result = await user.save();
+
         if(result !== null){
           return res.send({status : 200});
         }
@@ -93,7 +95,6 @@ router.post("/login.json", async (req, res) => {
                         res.cookie("token", user.token)
                             .status(200)
                             .json({ //로그인 성공시 화면에 전달하는 정보
-                                loginSuccess: true,
                                 userName: user.name,
                                 userEmail: user.email,
                                 isadmin: user.isadmin,
@@ -121,7 +122,8 @@ router.get("/auth", auth, (req, res) => {
         address: req.user.address,
         detailaddress: req.user.detailaddress,
         reviewcount: req.user.reviewcount,
-        isadmin: req.user.isadmin
+        isadmin: req.user.isadmin,
+        imageurl: `/api/user/image?_id=${req.user._id}&ts=${Date.now()}`
     });
 });
 
