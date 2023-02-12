@@ -15,6 +15,8 @@ var upload = multer({ storage: multer.memoryStorage() });
 //모델 객체
 var User = require('../models/usermodel');
 
+var Bakeryreview = require('../models/bakeryreviewmodel');
+
 // 유저등록 => 127.0.0.1:3000/api/user/insertuser.json upload.single("file"), 
 router.post('/insertuser.json', async function (req, res, next) {
     try {
@@ -47,9 +49,9 @@ router.put('/updateuser.json', upload.single("file"), async function(req, res, n
         const query = { email : req.body.email };
         const user   = await User.findOne(query);
         
-        user.password   = req.body.password;
+        user.password = req.body.password;
         user.address = req.body.address;
-        user.detailaddress  = req.body.detailaddress;
+        user.detailaddress = req.body.detailaddress;
         user.filedata = req.file.buffer;
         user.filename = req.file.originalname;
         user.filetype = req.file.mimetype;
@@ -67,6 +69,36 @@ router.put('/updateuser.json', upload.single("file"), async function(req, res, n
       return res.send({status : -1, result : e});
     }
   });
+
+  //유저 리뷰카운트 수정 127.0.0.1:3000/api/user/userupdatereviewcount.json
+router.put('/userupdatereviewcount.json', async function(req, res, next){
+    try {
+        const query = { email : req.body.email };
+        const user   = await User.findOne(query);
+        
+        //전체 리뷰수 +1
+        user.totalreveiwcount = user.totalreveiwcount + 1;
+
+        const query1 =  { $and: [{ email : req.body.email }, { bakery_id: req.body.bakery_id }] };
+        const bakeryreview = await Bakeryreview.find(query1)
+                                    .limit(1);
+        if(bakeryreview === null){ //해당 상점에 리뷰가 한건이라도 있으면
+            user.certreveiwcount = user.certreveiwcount + 1; //인증리뷰카운트 +1
+        }
+
+        const result = await user.save();
+
+        if(result !== null){
+          return res.send({status : 200});
+        }
+        return res.send({status : 0});
+    } catch (e) {
+      
+      console.error(e);
+      return res.send({status : -1, result : e});
+    }
+  });
+
 
 //로그인 로직 /api/user/login.json
 router.post("/login.json", async (req, res) => {
@@ -120,7 +152,8 @@ router.get("/auth", auth, (req, res) => {
         gender: req.user.gender,
         address: req.user.address,
         detailaddress: req.user.detailaddress,
-        reviewcount: req.user.reviewcount,
+        totalreveiwcount: req.user.totalreveiwcount,
+        certreveiwcount: req.user.certreveiwcount,
         isadmin: req.user.isadmin,
         imageurl: `/api/user/image?_id=${req.user._id}&ts=${Date.now()}`
     });

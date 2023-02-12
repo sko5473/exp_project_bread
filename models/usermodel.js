@@ -14,7 +14,8 @@ var UserSchema = new mongoose.Schema({
     detailaddress: { type: String, default: '' }, //상세주소
     gender: { type: String, default: '' }, //성별
     password: { type: String, default: '' }, //비밀번호
-    reveiwcount: { type: Number, default: 0 }, //리뷰횟수
+    totalreveiwcount: { type: Number, default: 0 }, //전체리뷰횟수
+    certreveiwcount: { type: Number, default: 0 }, //인증리뷰횟수
     joindate: { type: Date, default: Date.now }, //가입일자
     withdrawaldate: { type: Date, default: '' }, //탈퇴일자
     filedata: { type: Buffer, default: null }, //파일데이터

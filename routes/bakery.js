@@ -153,6 +153,20 @@ router.get('/selectshop.json', async function (req, res, next) {
   }
 });
 
+// /api/bakery/selectshopcount.json
+//전체빵집수 조회
+router.get('/selectshopcount.json', async function (req, res, next) {
+  try {
+    //전체빵집수
+    const total = await Bakery.countDocuments();
+
+    return res.send({ status: 200, total: total });
+  } catch (e) {
+    console.error(e);
+    return res.send({ status: -1, result: e });
+  }
+});
+
 //빵집 한개 조회 => /api/bakery/bakeryone.json?_id=15
 router.get('/bakeryone.json', async function (req, res, next) {
   try {

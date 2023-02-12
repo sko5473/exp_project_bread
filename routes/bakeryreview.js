@@ -240,6 +240,21 @@ router.get('/selectreviewone5.json', async function (req, res, next) {
   }
 });
 
+// /api/bakery/selectmyshopreviewcount.json
+//전체리뷰수 조회
+router.get('/selectmyshopreviewcount.json', async function (req, res, next) {
+  try {
+    //전체빵집수
+    const query = { writer : req.query.writer};
+    const total = await BakeryReview.countDocuments(query);
+
+    return res.send({ status: 200, total: total });
+  } catch (e) {
+    console.error(e);
+    return res.send({ status: -1, result: e });
+  }
+});
+
 //이미지 URL => 127.0.0.1:3000/api/bakeryreview/image?_id=3
 //<img src="/api/bakeryreview/image?_id=3">
 router.get('/image', async function (req, res, next) {

@@ -53,7 +53,7 @@ router.delete('/deletemybookmark.json', async function(req, res, next){
   }
 });
 
-//나의즐겨찾기 조회 => 127.0.0.1:3000/api/mybookmark/selectmybookmark.json?_id=15
+//나의즐겨찾기 1개 조회 => 127.0.0.1:3000/api/mybookmark/selectmybookmark.json?_id=15
 router.get('/selectmybookmark.json', async function (req, res, next) {
   try {
     const bakerynum = req.query._id
@@ -62,6 +62,26 @@ router.get('/selectmybookmark.json', async function (req, res, next) {
       .limit(1);
 
     return res.send({ status: 200, result: result });
+  } catch (e) {
+    console.error(e);
+    return res.send({ status: -1, result: e });
+  }
+});
+
+//나의즐겨찾기 모두 조회 => 127.0.0.1:3000/api/mybookmark/selectallmybookmark.json?email=22@naver.com
+router.get('/selectallmybookmark.json', async function (req, res, next) {
+  try {
+    const page = req.query.page;
+    const email = req.query.email
+    const query = { email : email};
+    const result = await MyBookmark.find(query)
+                                  .sort({_id : -1})
+                                  .skip((page-1)*10)
+                                  .limit(10);
+
+    const total = await MyBookmark.countDocuments(query);
+
+    return res.send({ status: 200, result: result, total: total });
   } catch (e) {
     console.error(e);
     return res.send({ status: -1, result: e });
