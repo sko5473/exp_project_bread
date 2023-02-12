@@ -15,6 +15,7 @@ var bakeryReviewRouter = require('./routes/bakeryreview');
 var iconRouter = require('./routes/icon');
 var userRouter = require('./routes/user');
 var mybookmarkRouter = require('./routes/mybookmark');
+var questionRouter = require('./routes/question');
 
 var app = express();
 
@@ -39,6 +40,7 @@ app.use('/api/bakeryreview', bakeryReviewRouter);
 app.use('/api/icon', iconRouter);
 app.use('/api/user', userRouter);
 app.use('/api/mybookmark', mybookmarkRouter);
+app.use('/api/question', questionRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

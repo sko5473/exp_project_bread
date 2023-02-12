@@ -43,7 +43,7 @@ router.post('/insertuser.json', async function (req, res, next) {
 //유저수정 127.0.0.1:3000/api/user/updateuser.json
 router.put('/updateuser.json', upload.single("file"), async function(req, res, next){
     try {
-        console.log('이메일', req.body.email);
+        console.log('파일', req.file);
         const query = { email : req.body.email };
         const user   = await User.findOne(query);
         
@@ -114,7 +114,6 @@ router.post("/login.json", async (req, res) => {
 router.get("/auth", auth, (req, res) => {
     //auth 미들웨어를 통과한 상태 이므로
     //req.user에 user값을 넣어줬으므로
-    console.log('알알',req);
     res.status(200).json({ //재 인증 후 전달해줄 정보
         email: req.user.email,
         name: req.user.name,
