@@ -48,8 +48,6 @@ router.get('/selectreview.json', async function (req, res, next) {
 
     const bakery_id = req.query.bakery_id;
     const page = req.query.page; //1
-    console.log('리퀘스트 쿼리', req.query);
-    console.log('리퀘스트', req);
 
     //전체 데이터에서 제목이 검색어가 포함된 것 가져오기
     // a => a123, 

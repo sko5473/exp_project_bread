@@ -75,21 +75,27 @@ router.put('/userupdatereviewcount.json', async function(req, res, next){
     try {
         const query = { email : req.body.email };
         const user   = await User.findOne(query);
-        
         //전체 리뷰수 +1
         user.totalreveiwcount = user.totalreveiwcount + 1;
+        const query1 =  { $and: [{ writer : req.body.email }, { bakery_id: req.body.bakery_id }] };
+        // const query1 =  { writer : req.body.email };
+        const project = {
+            filedata: 0,
+            filename: 0,
+            filesize: 0,
+            filetype: 0,
+          };
 
-        const query1 =  { $and: [{ email : req.body.email }, { bakery_id: req.body.bakery_id }] };
-        const bakeryreview = await Bakeryreview.find(query1)
-                                    .limit(1);
-        if(bakeryreview === null){ //해당 상점에 리뷰가 한건이라도 있으면
-            user.certreveiwcount = user.certreveiwcount + 1; //인증리뷰카운트 +1
+        const bakeryreview = await Bakeryreview.findOne(query1, project);
+        
+        if(bakeryreview === null){ //등록이 먼저 된 후 검색 되므로 리뷰 수(조회 결과) 가 1개 이하 일 때 인증리뷰카운트 +1
+            user.certreveiwcount = user.certreveiwcount + 1; 
         }
 
         const result = await user.save();
 
         if(result !== null){
-          return res.send({status : 200});
+          return res.send({status : 200, result : result});
         }
         return res.send({status : 0});
     } catch (e) {
