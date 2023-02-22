@@ -147,6 +147,31 @@ router.post("/login.json", async (req, res) => {
     }
 });
 
+//구글로그인시 회원db에 아이디 있는지 확인 /api/user/googlelogin.json
+router.post("/googlelogin.json", async (req, res) => {
+    //로그인을할때 아이디와 비밀번호를 받는다
+    const query = { email: req.body.email };
+    const result = await User.findOne(query);
+    console.log('조회결과',result);
+    if (result === null) {
+        return res.send({ status: -1});
+    } else {
+        result.generateToken()
+            .then((user) => {
+                res.cookie("token", user.token)
+                    .json({ //로그인 성공시 화면에 전달하는 정보
+                        userName: user.name,
+                        userEmail: user.email,
+                        isadmin: user.isadmin,
+                        status: 200
+                    })
+            })
+            .catch((err) => {
+                res.status(400).send(err);
+            });
+    }
+});
+
 //auth 미들웨어를 가져온다
 //auth 미들웨어에서 필요한것 : Token을 찾아서 검증하기
 router.get("/auth", auth, (req, res) => {
