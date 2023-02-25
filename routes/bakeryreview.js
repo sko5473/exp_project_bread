@@ -258,7 +258,7 @@ router.get('/selectmyshopreviewcount.json', async function (req, res, next) {
 router.get('/selectreviewcountforchart.json', async function (req, res, next) {
   try {
     
-    const query1 = { "regdate": {$gte: "2023-01-01T00:00:00", $lte: "2023-01-31T23:59:59"}};
+    const query1 = { "regdate": {$gte: "2023-01-01T00:00:00+09:00", $lte: "2023-01-31T23:59:59+09:00"}};
     const query2 = { "regdate": {$gte: "2023-02-01T00:00:00+09:00", $lte: "2023-02-28T23:59:59+09:00"}};
     const query3 = { "regdate": {$gte: "2023-03-01T00:00:00+09:00", $lte: "2023-03-31T23:59:59+09:00"}};
     const query4 = { "regdate": {$gte: "2023-04-01T00:00:00+09:00", $lte: "2023-04-30T23:59:59+09:00"}};

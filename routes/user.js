@@ -2,9 +2,6 @@ var express = require('express');
 var router = express.Router();
 const { auth } = require("../middleware/auth");
 
-//접속 ip확인모듈
-var requestIp = require('request-ip');
-
 // 타임 존 설정하기
 var moment = require('moment');
 require('moment-timezone');
@@ -146,8 +143,6 @@ router.post("/login.json", async (req, res) => {
                     });
                 }
 
-                console.log("client IP: " + requestIp.getClientIp(req));
-
                 //비밀번호 일치시 토큰 생성
                 result.generateToken()
                     .then((user) => {
@@ -170,7 +165,7 @@ router.post("/login.json", async (req, res) => {
 
 //구글로그인시 회원db에 아이디 있는지 확인 /api/user/googlelogin.json
 router.post("/googlelogin.json", async (req, res) => {
-    //로그인을할때 아이디와 비밀번호를 받는다
+    //로그인을 할 때 아이디와 비밀번호를 받는다
     const query = { email: req.body.email };
     const result = await User.findOne(query);
     console.log('조회결과', result);
@@ -194,7 +189,7 @@ router.post("/googlelogin.json", async (req, res) => {
 });
 
 //auth 미들웨어를 가져온다
-//auth 미들웨어에서 필요한것 : Token을 찾아서 검증하기
+//auth 미들웨어에서 필요한 것 : Token을 찾아서 검증하기
 router.get("/auth", auth, (req, res) => {
     //auth 미들웨어를 통과한 상태 이므로
     //req.user에 user값을 넣어줬으므로

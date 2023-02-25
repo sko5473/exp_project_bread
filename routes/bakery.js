@@ -13,9 +13,9 @@ var upload = multer({ storage: multer.memoryStorage() });
 
 //모델 객체
 var Bakery = require('../models/bakerymodel');
+var BakeryReview = require('../models/bakeryreviewmodel');
 
 // 상점등록 => 127.0.0.1:3000/api/bakery/insertshop.json
-//{"title":"a", "content":"b", "writer":"c","file":"첨부파일"}
 router.post('/insertshop.json', upload.single("file"), async function (req, res, next) {
   try {
     const bakery = new Bakery();
@@ -27,7 +27,6 @@ router.post('/insertshop.json', upload.single("file"), async function (req, res,
     bakery.menu = req.body.menu;
     bakery.price = req.body.price;
     bakery.holiday = req.body.holiday;
-    bakery.point = req.body.point;
     bakery.lat = Number(req.body.lat);
     bakery.lng = Number(req.body.lng);
     bakery.strength = req.body.strength;
@@ -102,6 +101,37 @@ router.put('/updatebookmarkcountdown.json', async function (req, res, next) {
 
     if (result !== null) {
       result.bookmarkcount = result.bookmarkcount - 1;
+      const result1 = await result.save();
+
+      if (result1 !== null) {
+        return res.send({ status: 200 });
+      }
+    }
+    return res.send({ status: 0 });
+
+  } catch (e) {
+    console.error(e);
+    return res.send({ status: -1, result: e });
+  }
+});
+
+// 리뷰작성시 상점 평점 업데이트 => 127.0.0.1:3000/api/bakery/updateshoppoint.json?_id=20
+router.put('/updateshoppoint.json', async function (req, res, next) {
+  try {
+    const query = { bakery_id: Number(req.query._id) }; //해당 상점의 평점을 업데이트
+    const result = await Bakery.findOne(query);
+    
+    //상점리뷰콜렉션에서 해당상점으로 분류 한 후 평점의 합을 계산하여 그룹화한다.
+    // const sum = await BakeryReview.aggregate([{$match:{bakery_id:req.query._id}},{$group:{_id:"$bakery_id",computedpoint:{$sum:"$point"}}}]);
+    const sum = await BakeryReview.aggregate([{$match:{bakery_id:Number(req.query._id)}},{$group:{_id:"$bakery_id",computedpoint:{$sum:"$point"}}}]);
+    
+    //빵집리뷰 수
+    const total = await BakeryReview.countDocuments(query);
+    
+    if (result !== null) {
+      //평점 업데이트 리뷰합/리뷰수 *10/10<-소수점 2자리 이하 버림
+      result.point = Math.floor((sum[0].computedpoint/total) * 10) / 10;
+      console.log('겨로가갑',result.point);
       const result1 = await result.save();
 
       if (result1 !== null) {
@@ -200,14 +230,6 @@ router.get('/bakeryone.json', async function (req, res, next) {
 //차트용 즐겨찾기 많은 순 7개 목록 => 127.0.0.1:3000/api/bakery/selectshoporderbystar.json
 router.get('/selectshoporderbystar.json', async function (req, res, next) {
   try {
-
-    const project = {
-      filedata: 0,
-      filename: 0,
-      filesize: 0,
-      filetype: 0,
-    };
-
     const result = await Bakery.find()
       .sort({ bookmarkcount: -1 })
       .limit(7);
