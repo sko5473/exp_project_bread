@@ -2,6 +2,9 @@ var express = require('express');
 var router = express.Router();
 const { auth } = require("../middleware/auth");
 
+//접속 ip확인모듈
+var requestIp = require('request-ip');
+
 // 타임 존 설정하기
 var moment = require('moment');
 require('moment-timezone');
@@ -111,7 +114,7 @@ router.post("/login.json", async (req, res) => {
     //로그인을할때 아이디와 비밀번호를 받는다
     const query = { email: req.body.email };
     const result = await User.findOne(query);
-
+    
     if (result === null) {
         return res.json({
             loginSuccess: false,
@@ -126,7 +129,9 @@ router.post("/login.json", async (req, res) => {
                         message: "비밀번호가 일치하지 않습니다",
                     });
                 }
-
+                
+                console.log("client IP: "+ requestIp.getClientIp(req));
+                
                 //비밀번호 일치시 토큰 생성
                 result.generateToken()
                     .then((user) => {

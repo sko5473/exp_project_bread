@@ -238,7 +238,7 @@ router.get('/selectreviewone5.json', async function (req, res, next) {
   }
 });
 
-// /api/bakery/selectmyshopreviewcount.json
+// /api/bakeryreview/selectmyshopreviewcount.json
 //전체리뷰수 조회
 router.get('/selectmyshopreviewcount.json', async function (req, res, next) {
   try {
@@ -247,6 +247,44 @@ router.get('/selectmyshopreviewcount.json', async function (req, res, next) {
     const total = await BakeryReview.countDocuments(query);
 
     return res.send({ status: 200, total: total });
+  } catch (e) {
+    console.error(e);
+    return res.send({ status: -1, result: e });
+  }
+});
+
+// /api/bakeryreview/selectreviewcountforchart.json
+//차트용 월별 리뷰수 조회
+router.get('/selectreviewcountforchart.json', async function (req, res, next) {
+  try {
+    
+    const query1 = { "regdate": {$gte: "2023-01-01T00:00:00", $lte: "2023-01-31T23:59:59"}};
+    const query2 = { "regdate": {$gte: "2023-02-01T00:00:00+09:00", $lte: "2023-02-28T23:59:59+09:00"}};
+    const query3 = { "regdate": {$gte: "2023-03-01T00:00:00+09:00", $lte: "2023-03-31T23:59:59+09:00"}};
+    const query4 = { "regdate": {$gte: "2023-04-01T00:00:00+09:00", $lte: "2023-04-30T23:59:59+09:00"}};
+    const query5 = { "regdate": {$gte: "2023-05-01T00:00:00+09:00", $lte: "2023-05-31T23:59:59+09:00"}};
+    const query6 = { "regdate": {$gte: "2023-06-01T00:00:00+09:00", $lte: "2023-06-30T23:59:59+09:00"}};
+    const query7 = { "regdate": {$gte: "2023-07-01T00:00:00+09:00", $lte: "2023-07-31T23:59:59+09:00"}};
+    const query8 = { "regdate": {$gte: "2023-08-01T00:00:00+09:00", $lte: "2023-08-31T23:59:59+09:00"}};
+    const query9 = { "regdate": {$gte: "2023-09-01T00:00:00+09:00", $lte: "2023-09-30T23:59:59+09:00"}};
+    const query10 = { "regdate": {$gte: "2023-10-01T00:00:00+09:00", $lte: "2023-10-31T23:59:59+09:00"}};
+    const query11 = { "regdate": {$gte: "2023-11-01T00:00:00+09:00", $lte: "2023-11-30T23:59:59+09:00"}};
+    const query12 = { "regdate": {$gte: "2023-12-01T00:00:00+09:00", $lte: "2023-12-31T23:59:59+09:00"}};
+    const JanuaryTotal = await BakeryReview.countDocuments(query1);
+    const FebruaryTotal = await BakeryReview.countDocuments(query2);
+    const MarchTotal = await BakeryReview.countDocuments(query3);
+    const AprilTotal = await BakeryReview.countDocuments(query4);
+    const MayTotal = await BakeryReview.countDocuments(query5);
+    const JuneTotal = await BakeryReview.countDocuments(query6);
+    const JulyTotal = await BakeryReview.countDocuments(query7);
+    const AugustTotal = await BakeryReview.countDocuments(query8);
+    const SeptemberTotal = await BakeryReview.countDocuments(query9);
+    const OctoberTotal = await BakeryReview.countDocuments(query10);
+    const NovemberTotal = await BakeryReview.countDocuments(query11);
+    const DecemberTotal = await BakeryReview.countDocuments(query12);
+
+    return res.send({ status: 200, total: [JanuaryTotal, FebruaryTotal, MarchTotal, AprilTotal, MayTotal, JuneTotal, JulyTotal, AugustTotal,
+      SeptemberTotal, OctoberTotal, NovemberTotal, DecemberTotal] });
   } catch (e) {
     console.error(e);
     return res.send({ status: -1, result: e });
