@@ -46,12 +46,12 @@ router.post('/insertuser.json', async function (req, res, next) {
 });
 
 //유저수정 127.0.0.1:3000/api/user/updateuser.json
-router.put('/updateuser.json', upload.single("file"), async function(req, res, next){
+router.put('/updateuser.json', upload.single("file"), async function (req, res, next) {
     try {
         console.log('파일', req.file);
-        const query = { email : req.body.email };
-        const user   = await User.findOne(query);
-        
+        const query = { email: req.body.email };
+        const user = await User.findOne(query);
+
         user.password = req.body.password;
         user.address = req.body.address;
         user.detailaddress = req.body.detailaddress;
@@ -59,62 +59,78 @@ router.put('/updateuser.json', upload.single("file"), async function(req, res, n
         user.filename = req.file.originalname;
         user.filetype = req.file.mimetype;
         user.filesize = req.file.size;
-  
+
         const result = await user.save();
 
-        if(result !== null){
-          return res.send({status : 200});
+        if (result !== null) {
+            return res.send({ status: 200 });
         }
-        return res.send({status : 0});
+        return res.send({ status: 0 });
     } catch (e) {
-      
-      console.error(e);
-      return res.send({status : -1, result : e});
-    }
-  });
 
-  //유저 리뷰카운트 수정 127.0.0.1:3000/api/user/userupdatereviewcount.json
-router.put('/userupdatereviewcount.json', async function(req, res, next){
+        console.error(e);
+        return res.send({ status: -1, result: e });
+    }
+});
+
+//유저 리뷰카운트 수정 127.0.0.1:3000/api/user/userupdatereviewcount.json
+router.put('/userupdatereviewcount.json', async function (req, res, next) {
     try {
-        const query = { email : req.body.email };
-        const user   = await User.findOne(query);
+        const query = { email: req.body.email };
+        const user = await User.findOne(query);
         //전체 리뷰수 +1
         user.totalreveiwcount = user.totalreveiwcount + 1;
-        const query1 =  { $and: [{ writer : req.body.email }, { bakery_id: req.body.bakery_id }] };
+        const query1 = { $and: [{ writer: req.body.email }, { bakery_id: req.body.bakery_id }] };
         // const query1 =  { writer : req.body.email };
         const project = {
             filedata: 0,
             filename: 0,
             filesize: 0,
             filetype: 0,
-          };
+        };
 
         const bakeryreview = await Bakeryreview.findOne(query1, project);
-        
-        if(bakeryreview === null){ //등록이 먼저 된 후 검색 되므로 리뷰 수(조회 결과) 가 1개 이하 일 때 인증리뷰카운트 +1
-            user.certreveiwcount = user.certreveiwcount + 1; 
+
+        if (bakeryreview === null) { //등록이 먼저 된 후 검색 되므로 리뷰 수(조회 결과) 가 1개 이하 일 때 인증리뷰카운트 +1
+            user.certreveiwcount = user.certreveiwcount + 1;
         }
 
         const result = await user.save();
 
-        if(result !== null){
-          return res.send({status : 200, result : result});
+        if (result !== null) {
+            return res.send({ status: 200, result: result });
         }
-        return res.send({status : 0});
+        return res.send({ status: 0 });
     } catch (e) {
-      
-      console.error(e);
-      return res.send({status : -1, result : e});
-    }
-  });
 
+        console.error(e);
+        return res.send({ status: -1, result: e });
+    }
+});
+
+//차트용 가입자 중 남녀성비 => 127.0.0.1:3000/api/user/selectusergenderrate.json
+router.get('/selectusergenderrate.json', async function (req, res, next) {
+    try {
+
+        const query1 = { gender : "male"};
+        const maleTotal = await User.countDocuments(query1);
+
+        const query2 = { gender : "female"};
+        const femaleTotal = await User.countDocuments(query2);
+
+        return res.send({ status: 200, maleTotal: maleTotal, femaleTotal: femaleTotal});
+    } catch (e) {
+        console.error(e);
+        return res.send({ status: -1, result: e });
+    }
+});
 
 //로그인 로직 /api/user/login.json
 router.post("/login.json", async (req, res) => {
     //로그인을할때 아이디와 비밀번호를 받는다
     const query = { email: req.body.email };
     const result = await User.findOne(query);
-    
+
     if (result === null) {
         return res.json({
             loginSuccess: false,
@@ -129,9 +145,9 @@ router.post("/login.json", async (req, res) => {
                         message: "비밀번호가 일치하지 않습니다",
                     });
                 }
-                
-                console.log("client IP: "+ requestIp.getClientIp(req));
-                
+
+                console.log("client IP: " + requestIp.getClientIp(req));
+
                 //비밀번호 일치시 토큰 생성
                 result.generateToken()
                     .then((user) => {
@@ -157,9 +173,9 @@ router.post("/googlelogin.json", async (req, res) => {
     //로그인을할때 아이디와 비밀번호를 받는다
     const query = { email: req.body.email };
     const result = await User.findOne(query);
-    console.log('조회결과',result);
+    console.log('조회결과', result);
     if (result === null) {
-        return res.send({ status: -1});
+        return res.send({ status: -1 });
     } else {
         result.generateToken()
             .then((user) => {

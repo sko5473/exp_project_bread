@@ -65,7 +65,7 @@ router.put('/updatereviewcount.json', async function (req, res, next) {
       }
     }
     return res.send({ status: 0 });
-    
+
   } catch (e) {
     console.error(e);
     return res.send({ status: -1, result: e });
@@ -87,7 +87,7 @@ router.put('/updatebookmarkcountup.json', async function (req, res, next) {
       }
     }
     return res.send({ status: 0 });
-    
+
   } catch (e) {
     console.error(e);
     return res.send({ status: -1, result: e });
@@ -109,7 +109,7 @@ router.put('/updatebookmarkcountdown.json', async function (req, res, next) {
       }
     }
     return res.send({ status: 0 });
-    
+
   } catch (e) {
     console.error(e);
     return res.send({ status: -1, result: e });
@@ -197,6 +197,31 @@ router.get('/bakeryone.json', async function (req, res, next) {
   }
 });
 
+//차트용 즐겨찾기 많은 순 7개 목록 => 127.0.0.1:3000/api/bakery/selectshoporderbystar.json
+router.get('/selectshoporderbystar.json', async function (req, res, next) {
+  try {
+
+    const project = {
+      filedata: 0,
+      filename: 0,
+      filesize: 0,
+      filetype: 0,
+    };
+
+    const result = await Bakery.find()
+      .sort({ bookmarkcount: -1 })
+      .limit(7);
+
+    if (result !== null) {
+      return res.send({ status: 200, result: result });
+    }
+    return res.send({ status: 0 });
+  } catch (e) {
+    console.error(e);
+    return res.send({ status: -1, result: e });
+  }
+});
+
 //이미지 URL => 127.0.0.1:3000/api/bakery/image?_id=3
 //<img src="/api/bakery/image?_id=3">
 router.get('/image', async function (req, res, next) {
@@ -205,7 +230,6 @@ router.get('/image', async function (req, res, next) {
     const query = { _id: Number(req.query._id) };
     const project = { filedata: 1, filetype: 1 };
     const result = await Bakery.findOne(query, project);
-    //console.log(result);
 
     res.contentType(result.filetype);
 
