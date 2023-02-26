@@ -118,20 +118,21 @@ router.put('/updatebookmarkcountdown.json', async function (req, res, next) {
 // 리뷰작성시 상점 평점 업데이트 => 127.0.0.1:3000/api/bakery/updateshoppoint.json?_id=20
 router.put('/updateshoppoint.json', async function (req, res, next) {
   try {
-    const query = { bakery_id: Number(req.query._id) }; //해당 상점의 평점을 업데이트
+    const query = { _id: Number(req.query._id) }; //해당 상점의 평점을 업데이트
     const result = await Bakery.findOne(query);
     
     //상점리뷰콜렉션에서 해당상점으로 분류 한 후 평점의 합을 계산하여 그룹화한다.
-    // const sum = await BakeryReview.aggregate([{$match:{bakery_id:req.query._id}},{$group:{_id:"$bakery_id",computedpoint:{$sum:"$point"}}}]);
-    const sum = await BakeryReview.aggregate([{$match:{bakery_id:Number(req.query._id)}},{$group:{_id:"$bakery_id",computedpoint:{$sum:"$point"}}}]);
+    const sum = await BakeryReview.aggregate([{$match:{bakery_id:Number(req.query._id)}},
+                                              {$group:{_id:"$bakery_id",computedpoint:{$sum:"$point"}}}]);
     
     //빵집리뷰 수
-    const total = await BakeryReview.countDocuments(query);
+    const query1 = { bakery_id: Number(req.query._id) };
+    const total = await BakeryReview.countDocuments(query1);
     
     if (result !== null) {
       //평점 업데이트 리뷰합/리뷰수 *10/10<-소수점 2자리 이하 버림
       result.point = Math.floor((sum[0].computedpoint/total) * 10) / 10;
-      console.log('겨로가갑',result.point);
+
       const result1 = await result.save();
 
       if (result1 !== null) {
@@ -154,7 +155,7 @@ router.get('/selectshop.json', async function (req, res, next) {
 
     //전체 데이터에서 제목이 검색어가 포함된 것 가져오기
     // a => a123, 
-    const query = { $or: [{ address: new RegExp(text, 'i') }, { name: new RegExp(text, 'i') }] }; //RegExp(포함된 것을 찾아내는 함수)
+    const query = { $or: [{ address: new RegExp(text, 'i') }, { name: new RegExp(text, 'i') }, { strength: new RegExp(text, 'i') }] }; //RegExp(포함된 것을 찾아내는 함수)
     const project = {
       filedata: 0,
       filename: 0,
