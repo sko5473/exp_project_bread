@@ -61,8 +61,8 @@ router.get('/selectreview.json', async function (req, res, next) {
 
     const result = await BakeryReview.find(query, project)
       .sort({ _id: -1 })
-      .skip((page - 1) * 10)
-      .limit(10);
+      .skip((page - 1) * 5)
+      .limit(5);
 
     //등록일, 이미지URL 수동 생성                          
     for (let tmp of result) {
