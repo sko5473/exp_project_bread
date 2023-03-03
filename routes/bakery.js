@@ -214,7 +214,7 @@ router.get('/bakeryone.json', async function (req, res, next) {
 
     if (result !== null) {
       result.regdate1 = moment(result.regdate).format("YYYY-MM-DD");
-      result.imageurl = `/api/board/image?_id=${no}&ts=${Date.now()}`;
+      result.imageurl = `/api/bakery/image?_id=${no}&ts=${Date.now()}`;
 
       return res.send({
         status: 200,
