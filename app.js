@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
+var router = express.Router();
 
 //npm i mongoose --save
 var mongoose = require('mongoose');
@@ -17,6 +18,8 @@ var userRouter = require('./routes/user');
 var mybookmarkRouter = require('./routes/mybookmark');
 var questionRouter = require('./routes/question');
 var loginIpLogRouter = require('./routes/loginiplog');
+
+
 
 var app = express();
 
@@ -43,6 +46,10 @@ app.use('/api/user', userRouter);
 app.use('/api/mybookmark', mybookmarkRouter);
 app.use('/api/question', questionRouter);
 app.use('/api/loginiplog', loginIpLogRouter);
+
+app.use('/', function(req, res, next){
+  res.sendFile(path.join(__dirname, '/public','index.html'));
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
