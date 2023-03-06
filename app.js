@@ -19,8 +19,6 @@ var mybookmarkRouter = require('./routes/mybookmark');
 var questionRouter = require('./routes/question');
 var loginIpLogRouter = require('./routes/loginiplog');
 
-
-
 var app = express();
 
 // view engine setup
