@@ -115,7 +115,7 @@ router.get('/selectquestion.json', async function (req, res, next) {
     const text = req.query.text; //검색어
     const page = req.query.page; //1
     const query = { $and: [{ title: new RegExp(text, 'i') }, { type: 0 }] };  //RegExp(포함된 것을 찾아내는 함수)
-
+    
     const result = await Question.find(query)
       .sort({ _id: -1 })
       .skip((page - 1) * 10)
